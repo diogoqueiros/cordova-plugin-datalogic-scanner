@@ -12,7 +12,7 @@ import com.datalogic.decode.BarcodeManager;
 import com.datalogic.decode.DecodeException;
 import com.datalogic.decode.DecodeResult;
 import com.datalogic.decode.ReadListener;
-import com.datalogic.device.ErrorManager;
+import com.datalogic.decode.configuration.ScannerProperties;
 
 import java.util.ArrayList;
 
@@ -41,21 +41,19 @@ public class ScanService extends CordovaPlugin {
                         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
                         pluginResult.setKeepCallback(true);
                         callbackContext.sendPluginResult(pluginResult);
-                    } catch(JSONException e){
+                    } catch (JSONException e) {
                         Log.e(LOGTAG, "Error building json object", e);
 
                     }
                 }
             };
-        }
-        else if ("start".equals(action)){
+        } else if ("start".equals(action)) {
             // If the decoder instance is null, create it.
             if (decoder == null) { // Remember an onPause call will set it to null.
                 decoder = new BarcodeManager();
+            } else {
+                return true;
             }
-			else{
-				return true;
-			}
 
             try {
 
@@ -72,25 +70,30 @@ public class ScanService extends CordovaPlugin {
 
                 decoder.addReadListener(listener);
 
+                // apply settings
+                ScannerProperties properties = ScannerProperties.edit(decoder);
+                properties.ean8.enable.set(true);
+                properties.ean8.sendChecksum.set(true);
+                properties.ean13.enable.set(true);
+                properties.ean13.sendChecksum.set(true);
+                properties.store(decoder, true);
             } catch (DecodeException e) {
                 Log.e(LOGTAG, "Error while trying to bind a listener to BarcodeManager", e);
             }
 
-        }
-		else if ("stop".equals(action)){
-			try {
-				if (decoder != null){
-					decoder.release();
-					scanCallback = null;
-					decoder = null;
-					listener = null;
-				}
+        } else if ("stop".equals(action)) {
+            try {
+                if (decoder != null) {
+                    decoder.release();
+                    scanCallback = null;
+                    decoder = null;
+                    listener = null;
+                }
             } catch (DecodeException e) {
                 Log.e(LOGTAG, "Error while releasing a BarcodeManager", e);
             }
-		}
-        else if ("trigger".equals(action)){
-            if (scanCallback != null){
+        } else if ("trigger".equals(action)) {
+            if (scanCallback != null) {
                 new AsyncDataUpdate().execute(data.getString(0));
             }
         }
@@ -109,7 +112,7 @@ public class ScanService extends CordovaPlugin {
 
                 String str = params[0];
 
-                if (str == null){
+                if (str == null) {
                     str = "";
                 }
                 barcode = new BarcodeScan("UPC", str);
@@ -125,7 +128,7 @@ public class ScanService extends CordovaPlugin {
 
         @Override
         protected void onPostExecute(BarcodeScan barcode) {
-            if (barcode != null && scanCallback != null){
+            if (barcode != null && scanCallback != null) {
                 scanCallback.execute(barcode);
             }
         }
@@ -137,7 +140,6 @@ public class ScanService extends CordovaPlugin {
         @Override
         protected void onProgressUpdate(Void... values) {
         }
-
 
     }
 
