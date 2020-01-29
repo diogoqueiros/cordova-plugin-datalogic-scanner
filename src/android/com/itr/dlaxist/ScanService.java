@@ -76,11 +76,11 @@ public class ScanService extends CordovaPlugin {
                 properties.ean8.sendChecksum.set(true);
                 properties.ean13.enable.set(true);
                 properties.ean13.sendChecksum.set(true);
+                properties.upcA.convertToEan13(true);
                 properties.store(decoder, true);
             } catch (DecodeException e) {
                 Log.e(LOGTAG, "Error while trying to bind a listener to BarcodeManager", e);
             }
-
         } else if ("stop".equals(action)) {
             try {
                 if (decoder != null) {
@@ -96,6 +96,10 @@ public class ScanService extends CordovaPlugin {
             if (scanCallback != null) {
                 new AsyncDataUpdate().execute(data.getString(0));
             }
+        } else if ("enableQRCode".equals(action)) {
+            ScannerProperties properties = ScannerProperties.edit(decoder);
+            properties.qrCode.enable.set(data.isNull(0) || data.getBoolean(0));
+            properties.store(decoder, true);
         }
 
         return true;
