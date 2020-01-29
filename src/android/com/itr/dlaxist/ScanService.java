@@ -76,6 +76,7 @@ public class ScanService extends CordovaPlugin {
                 properties.ean8.sendChecksum.set(true);
                 properties.ean13.enable.set(true);
                 properties.ean13.sendChecksum.set(true);
+                properties.upcA.enable.set(true);
                 properties.upcA.convertToEan13(true);
                 properties.store(decoder, true);
             } catch (DecodeException e) {
