@@ -76,8 +76,7 @@ public class ScanService extends CordovaPlugin {
                 properties.ean8.sendChecksum.set(true);
                 properties.ean13.enable.set(true);
                 properties.ean13.sendChecksum.set(true);
-                properties.upcA.enable.set(true);
-                properties.upcA.convertToEan13(true);
+                properties.upcA.convertToEan13.set(true);
                 properties.store(decoder, true);
             } catch (DecodeException e) {
                 Log.e(LOGTAG, "Error while trying to bind a listener to BarcodeManager", e);
