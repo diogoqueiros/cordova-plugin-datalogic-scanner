@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-datalogic-scanner",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Datalogic DL-Axist Cordova Plugin",
   "main": "index.js",
   "scripts": {
